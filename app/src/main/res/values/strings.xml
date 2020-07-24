@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Spread Steganography</string>
+    <string name="content_description">Content Description</string>
+    <string name="app_title">Spread Spectrum\nAudio Steganography</string>
+    <string name="app_subtitle">Don\'t let others know your secret message. Secure your messages into audio files.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home">Home</string>
+    <string name="embedding">Embedding</string>
+    <string name="extraction">Extraction</string>
+    <string name="how_to_embed">How to embed your message?</string>
+    <string name="how_to_extract">How to extract your message?</string>
+    <string name="embed_description_1">Add your message files or input your message in embedding menu.</string>
+    <string name="embed_instruction_2">Add your audio files in embedding menu.</string>
+    <string name="embed_instruction_3">Fill the key input then click Process Button and wait until process is finished.</string>
+    <string name="extract_instruction_1">Add your stego files in extract menu.</string>
+    <string name="extract_instruction_2">Input your key file in extract menu.</string>
+    <string name="extract_instruction_3">Choose Process Button and wait until process is finished.</string>
+    <string name="process">Process</string>
+    <string name="random">Random</string>
+    <string name="x0">x0</string>
+    <string name="c0">c0</string>
+    <string name="b">b</string>
+    <string name="a">a</string>
+    <string name="key">Key</string>
+    <string name="choose_file">Choose File</string>
+    <string name="audio_file">Audio file:</string>
+    <string name="choose_message">Choose Message</string>
+    <string name="select_your_message">Select your message file or type here..</string>
+    <string name="extracted_message">Extracted message</string>
+    <string name="let_begin">Let\'s Begin</string>
+    <string name="choose_key">Choose key</string>
+</resources>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_fragment_"
+    tools:context=".ui.ExtractingFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_file_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="@dimen/default_dimen"
+            android:text="@string/audio_file"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_file_path"
+            style="@style/Widget.Custom.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="@dimen/default_dimen"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_file_title">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_file_path"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false"
+                android:fontFamily="@font/mavenpro_medium"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_choose_audio"
+            style="@style/Custom.Material.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/choose_file"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/input_layout_file_path"
+            app:layout_constraintTop_toBottomOf="@id/input_layout_file_path" />
+
+        <TextView
+            android:id="@+id/tv_key_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:text="@string/key"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_choose_audio" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_a_key"
+            style="@style/Widget.Custom.TextInputLayout"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="@dimen/default_dimen"
+            android:hint="@string/a"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_key_title">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_a"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false"
+                android:fontFamily="@font/mavenpro_medium"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_b_key"
+            style="@style/Widget.Custom.TextInputLayout"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="8dp"
+            android:hint="@string/b"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_a_key">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_b"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false"
+                android:fontFamily="@font/mavenpro_medium"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_c0_key"
+            style="@style/Widget.Custom.TextInputLayout"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="8dp"
+            android:hint="@string/c0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_b_key">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_c0"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false"
+                android:fontFamily="@font/mavenpro_medium"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_x0_key"
+            style="@style/Widget.Custom.TextInputLayout"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="8dp"
+            android:hint="@string/x0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_c0_key">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_txt_x0_key"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false"
+                android:fontFamily="@font/mavenpro_medium"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_choose_key"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/default_dimen"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="@font/mavenpro_medium"
+            android:text="@string/choose_key"
+            app:layout_constraintEnd_toStartOf="@+id/btn_process"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_x0_key" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_process"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_dimen"
+            android:fontFamily="@font/mavenpro_medium"
+            android:text="@string/process"
+            android:textColor="@color/colorTextPrimary"
+            app:backgroundTint="@color/colorAccent"
+            app:layout_constraintEnd_toEndOf="@+id/input_layout_x0_key"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_x0_key" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_message"
+            style="@style/Widget.Custom.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginVertical="@dimen/default_dimen"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_process">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_txt_message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/extracted_message"
+                android:inputType="textMultiLine"
+                android:maxLines="10" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

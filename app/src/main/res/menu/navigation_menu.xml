@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:enabled="true"
+        android:icon="@drawable/ic_home_solid"
+        android:title="@string/home" />
+    <item
+        android:id="@+id/nav_embedding"
+        android:enabled="true"
+        android:icon="@drawable/ic_lock"
+        android:title="@string/embedding" />
+    <item
+        android:id="@+id/nav_extraction"
+        android:enabled="true"
+        android:icon="@drawable/ic_lock_open"
+        android:title="@string/extraction" />
+</menu>

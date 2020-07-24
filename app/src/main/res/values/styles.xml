@@ -1,0 +1,37 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/mavenpro_regular</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
+    </style>
+
+    <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/nav_default_pop_enter_anim</item>
+        <item name="android:activityOpenExitAnimation">@anim/nav_default_pop_exit_anim</item>
+        <item name="android:activityCloseEnterAnimation">@anim/nav_default_enter_anim</item>
+        <item name="android:activityCloseExitAnimation">@anim/nav_default_exit_anim</item>
+    </style>
+
+    <style name="Custom.Material.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="elevation">8dp</item>
+        <item name="android:fontFamily">@font/mavenpro_medium</item>
+    </style>
+
+    <style name="Widget.Custom.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="hintTextAppearance">@style/TextAppearance.Custom.TextInputLayout.HintText</item>
+        <item name="hintTextColor">@color/colorPrimary</item>
+        <item name="boxStrokeColor">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="TextAppearance.Custom.TextInputLayout.HintText" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+</resources>
