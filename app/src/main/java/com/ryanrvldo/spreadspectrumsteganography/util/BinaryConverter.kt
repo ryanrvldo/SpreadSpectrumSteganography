@@ -1,7 +1,5 @@
 package com.ryanrvldo.spreadspectrumsteganography.util
 
-import java.lang.StringBuilder
-
 object BinaryConverter {
 
     fun stringToBinary(str: String): String {
@@ -18,7 +16,7 @@ object BinaryConverter {
         for (i in binary.indices step 8) {
             val str = binary.substring(i, i + 8)
             val num = Integer.parseInt(str, 2)
-            chars[i/8] = num.toChar()
+            chars[i / 8] = num.toChar()
         }
         return String(chars)
     }

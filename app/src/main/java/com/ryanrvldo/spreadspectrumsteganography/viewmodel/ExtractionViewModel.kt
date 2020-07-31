@@ -6,13 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ryanrvldo.spreadspectrumsteganography.util.MWCGenerator
-import com.ryanrvldo.spreadspectrumsteganography.util.SpreadHelper
+import com.ryanrvldo.spreadspectrumsteganography.util.SpreadHelper.deSpreadMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.InputStream
 import java.math.BigInteger
 import java.util.*
 import kotlin.math.abs
+import kotlin.system.measureTimeMillis
 
 
 class ExtractionViewModel : ViewModel() {
@@ -64,25 +65,23 @@ class ExtractionViewModel : ViewModel() {
     }
 
     fun extractMessage(init: ByteArray, mwcGenerator: MWCGenerator) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             _isLoading.postValue(true)
-            val startTime = System.nanoTime()
-
-            val xn = mwcGenerator.generateRandomIndex(length)
-            val builder = StringBuilder()
-            for (i in 0 until length) {
-                if (abs(init[xn[i]].rem(2)) == 0) {
-                    builder.append('0')
-                } else if (abs(init[xn[i]].rem(2)) == 1) {
-                    builder.append('1')
+            val runningTime = measureTimeMillis {
+                val xn = mwcGenerator.generateRandomIndex(length)
+                val builder = StringBuilder()
+                for (i in 0 until length) {
+                    if (abs(init[xn[i]].rem(2)) == 0) {
+                        builder.append('0')
+                    } else if (abs(init[xn[i]].rem(2)) == 1) {
+                        builder.append('1')
+                    }
                 }
+                val extractedMessage = deSpreadMessage(builder.toString(), mwcGenerator)
+                _resultMessage.postValue(extractedMessage)
             }
-            val extractedMessage = SpreadHelper.deSpreadMessage(builder.toString(), mwcGenerator)
-
-            val totalTime = ((System.nanoTime() - startTime).toDouble() / 1_000_000_000)
-            Log.d(TAG, "RunningTime: $totalTime seconds")
-            _resultMessage.postValue(extractedMessage)
             _isLoading.postValue(false)
+            Log.d(TAG, "RunningTime: ${runningTime.toDouble() / 1_000} seconds")
         }
     }
 

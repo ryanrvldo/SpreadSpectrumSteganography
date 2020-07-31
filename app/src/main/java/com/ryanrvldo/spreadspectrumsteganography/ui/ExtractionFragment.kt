@@ -15,7 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.ryanrvldo.spreadspectrumsteganography.R
 import com.ryanrvldo.spreadspectrumsteganography.databinding.FragmentExtractionBinding
-import com.ryanrvldo.spreadspectrumsteganography.util.LoadingDialog
+import com.ryanrvldo.spreadspectrumsteganography.util.CustomDialog
 import com.ryanrvldo.spreadspectrumsteganography.util.MWCGenerator
 import com.ryanrvldo.spreadspectrumsteganography.viewmodel.ExtractionViewModel
 
@@ -29,14 +29,14 @@ class ExtractionFragment : Fragment(), View.OnClickListener {
     private lateinit var initBytes: ByteArray
     private lateinit var generator: MWCGenerator
 
-    private lateinit var loadingDialog: LoadingDialog
+    private lateinit var customDialog: CustomDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentExtractionBinding.inflate(inflater, container, false)
-        loadingDialog = LoadingDialog(requireContext())
+        customDialog = CustomDialog(requireContext())
         return binding.root
     }
 
@@ -70,8 +70,15 @@ class ExtractionFragment : Fragment(), View.OnClickListener {
 
         viewModel.isLoading.observe(viewLifecycleOwner, Observer { value ->
             value?.let { status ->
-                if (status) loadingDialog.show()
-                else loadingDialog.close()
+                when (status) {
+                    true -> customDialog.showLoadingDialog()
+                    false -> {
+                        if (customDialog.isLoadingDialogShowing()) {
+                            customDialog.showSuccessDialog()
+                        }
+                        customDialog.closeLoadingDialog()
+                    }
+                }
             }
         })
     }

@@ -16,7 +16,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.ryanrvldo.spreadspectrumsteganography.R
 import com.ryanrvldo.spreadspectrumsteganography.databinding.FragmentEmbeddingBinding
-import com.ryanrvldo.spreadspectrumsteganography.util.LoadingDialog
+import com.ryanrvldo.spreadspectrumsteganography.util.CustomDialog
 import com.ryanrvldo.spreadspectrumsteganography.util.MWCGenerator
 import com.ryanrvldo.spreadspectrumsteganography.viewmodel.EmbeddingViewModel
 import kotlinx.coroutines.Dispatchers
@@ -37,14 +37,14 @@ class EmbeddingFragment : Fragment(), View.OnClickListener {
     private lateinit var initBytes: ByteArray
     private lateinit var message: String
 
-    private lateinit var loadingDialog: LoadingDialog
+    private lateinit var customDialog: CustomDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentEmbeddingBinding.inflate(layoutInflater, container, false)
-        loadingDialog = LoadingDialog(requireContext())
+        customDialog = CustomDialog(requireContext())
         return binding.root
     }
 
@@ -68,16 +68,13 @@ class EmbeddingFragment : Fragment(), View.OnClickListener {
             }
         })
 
-        viewModel.resultBytes.observe(viewLifecycleOwner, Observer { value ->
-            value?.let { bytes ->
-                saveStegoObject(bytes)
-            }
-        })
-
         viewModel.isLoading.observe(viewLifecycleOwner, Observer { value ->
             value?.let { status ->
-                if (status) loadingDialog.show()
-                else loadingDialog.close()
+                if (status) {
+                    customDialog.showLoadingDialog()
+                } else {
+                    customDialog.closeLoadingDialog()
+                }
             }
         })
     }
@@ -117,16 +114,25 @@ class EmbeddingFragment : Fragment(), View.OnClickListener {
                     !this::message.isInitialized && !this::initBytes.isInitialized ->
                         toast("Please input or initialized your cover object and message first.")
                     isValidKey() -> {
-                        val keys = getKeys()
-                        viewModel.embedMessage(
-                            message,
-                            initBytes,
-                            keys
-                        )
-                        saveKey(keys)
+                        embedMessage()
                     }
                     else -> toast("Please input your key first.")
                 }
+            }
+        }
+    }
+
+    private fun embedMessage() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            val keys = getKeys()
+            val resultBytes =
+                withContext(Dispatchers.Default) {
+                    viewModel.embedMessage(message, initBytes, keys)
+                }
+            saveStegoObject(resultBytes)
+            saveKey(getKeys())
+            withContext(Dispatchers.Main) {
+                customDialog.showSuccessDialog()
             }
         }
     }
@@ -164,7 +170,7 @@ class EmbeddingFragment : Fragment(), View.OnClickListener {
             val outputStream = FileOutputStream(file)
             outputStream.write(resultBytes)
             outputStream.close()
-            
+
             withContext(Dispatchers.Main) {
                 toast("Process success.\nStego Object and Stego Key is saved in${file.absolutePath}")
             }

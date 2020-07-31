@@ -1,7 +1,5 @@
 package com.ryanrvldo.spreadspectrumsteganography.util
 
-import android.util.Log
-
 object SpreadHelper {
 
     fun spreadMessage(message: String, mwcGenerator: MWCGenerator): String {
@@ -43,7 +41,6 @@ object SpreadHelper {
         for (i in demodulationResult.indices) {
             resultMessage.append(demodulationResult[i].substring(3, 5))
         }
-        Log.d("deSpreadMessage", resultMessage.toString())
         return BinaryConverter.binaryToString(resultMessage.toString())
     }
 }

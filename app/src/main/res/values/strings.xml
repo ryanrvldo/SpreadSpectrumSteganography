@@ -28,4 +28,5 @@
     <string name="extracted_message">Extracted message</string>
     <string name="let_begin">Let\'s Begin</string>
     <string name="choose_key">Choose key</string>
+    <string name="please_wait">Please wait a moment..</string>
 </resources>
