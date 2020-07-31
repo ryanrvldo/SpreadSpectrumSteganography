@@ -6,15 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.ryanrvldo.spreadspectrumsteganography.databinding.FragmentHomeBinding
+import com.ryanrvldo.spreadspectrumsteganography.databinding.FragmentHelpBinding
 import com.ryanrvldo.spreadspectrumsteganography.slider.HelpSliderAdapter
 import com.ryanrvldo.spreadspectrumsteganography.util.HelpData
 
-class HomeFragment : Fragment() {
+class HelpFragment : Fragment() {
 
     private lateinit var embedHelpSliderAdapter: HelpSliderAdapter
     private lateinit var extractHelpSliderAdapter: HelpSliderAdapter
-    private var _binding: FragmentHomeBinding? = null
+    private var _binding: FragmentHelpBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +31,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentHelpBinding.inflate(inflater, container, false)
         embedHelpSliderAdapter.setupIndicators(
             requireContext(),
             binding.embedIndicatorsContainer
