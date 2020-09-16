@@ -23,8 +23,11 @@ class CustomDialog(val context: Context) {
         .setPositiveButton("Okay") { dialogInterface, _ ->
             dialogInterface.dismiss()
         }
-        .setCancelable(true)
+        .setCancelable(false)
         .create()
 
-    fun showSuccessDialog() = successDialog.show()
+    fun showSuccessDialog(message: String) {
+        successDialog.setMessage(message)
+        successDialog.show()
+    }
 }

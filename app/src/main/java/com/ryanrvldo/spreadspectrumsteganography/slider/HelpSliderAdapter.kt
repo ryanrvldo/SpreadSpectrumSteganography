@@ -31,6 +31,7 @@ class HelpSliderAdapter(private val helpSlides: List<HelpSlide>) :
     }
 
     fun setupIndicators(context: Context, container: ViewGroup) {
+        container.removeAllViews()
         val indicators = arrayOfNulls<ImageView>(helpSlides.size)
         val layoutParams: LinearLayout.LayoutParams =
             LinearLayout.LayoutParams(

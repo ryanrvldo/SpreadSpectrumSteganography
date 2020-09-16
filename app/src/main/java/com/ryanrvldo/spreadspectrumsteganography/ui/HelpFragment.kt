@@ -6,16 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.ryanrvldo.spreadspectrumsteganography.databinding.FragmentHelpBinding
+import com.ryanrvldo.spreadspectrumsteganography.R
 import com.ryanrvldo.spreadspectrumsteganography.slider.HelpSliderAdapter
 import com.ryanrvldo.spreadspectrumsteganography.util.HelpData
+import kotlinx.android.synthetic.main.fragment_help.*
 
 class HelpFragment : Fragment() {
 
     private lateinit var embedHelpSliderAdapter: HelpSliderAdapter
     private lateinit var extractHelpSliderAdapter: HelpSliderAdapter
-    private var _binding: FragmentHelpBinding? = null
-    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,62 +30,56 @@ class HelpFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentHelpBinding.inflate(inflater, container, false)
-        embedHelpSliderAdapter.setupIndicators(
-            requireContext(),
-            binding.embedIndicatorsContainer
-        )
-        embedHelpSliderAdapter.setCurrentIndicator(
-            requireContext(),
-            0,
-            binding.embedIndicatorsContainer
-        )
-        extractHelpSliderAdapter.setupIndicators(
-            requireContext(),
-            binding.extractIndicatorsContainer
-        )
-        extractHelpSliderAdapter.setCurrentIndicator(
-            requireContext(),
-            0,
-            binding.extractIndicatorsContainer
-        )
-        return binding.root
+        return inflater.inflate(R.layout.fragment_help, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.viewpagerEmbed.adapter = embedHelpSliderAdapter
-        binding.viewpagerExtract.adapter = extractHelpSliderAdapter
+        embedHelpSliderAdapter.setupIndicators(
+            requireContext(),
+            embed_indicators_container
+        )
+        embedHelpSliderAdapter.setCurrentIndicator(
+            requireContext(),
+            0,
+            embed_indicators_container
+        )
+        extractHelpSliderAdapter.setupIndicators(
+            requireContext(),
+            extract_indicators_container
+        )
+        extractHelpSliderAdapter.setCurrentIndicator(
+            requireContext(),
+            0,
+            extract_indicators_container
+        )
 
-        binding.viewpagerEmbed.registerOnPageChangeCallback(object :
+        viewpager_embed.adapter = embedHelpSliderAdapter
+        viewpager_extract.adapter = extractHelpSliderAdapter
+
+        viewpager_embed.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 embedHelpSliderAdapter.setCurrentIndicator(
                     requireContext(),
                     position,
-                    binding.embedIndicatorsContainer
+                    embed_indicators_container
                 )
             }
         })
 
-        binding.viewpagerExtract.registerOnPageChangeCallback(object :
+        viewpager_extract.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 extractHelpSliderAdapter.setCurrentIndicator(
                     requireContext(),
                     position,
-                    binding.extractIndicatorsContainer
+                    extract_indicators_container
                 )
             }
         })
-
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

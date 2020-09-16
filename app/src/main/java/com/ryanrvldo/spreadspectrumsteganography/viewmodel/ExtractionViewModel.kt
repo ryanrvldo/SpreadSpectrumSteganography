@@ -1,6 +1,5 @@
 package com.ryanrvldo.spreadspectrumsteganography.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,10 +8,10 @@ import com.ryanrvldo.spreadspectrumsteganography.util.MWCGenerator
 import com.ryanrvldo.spreadspectrumsteganography.util.SpreadHelper.deSpreadMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.InputStream
 import java.math.BigInteger
 import java.util.*
 import kotlin.math.abs
+import kotlin.properties.Delegates
 import kotlin.system.measureTimeMillis
 
 
@@ -35,22 +34,22 @@ class ExtractionViewModel : ViewModel() {
     val isLoading: LiveData<Boolean>
         get() = _isLoading
 
-    fun setInitBytes(inputStream: InputStream) {
+    fun setInitBytes(bytes: ByteArray) {
         viewModelScope.launch(Dispatchers.IO) {
-            _initBytes.postValue(inputStream.readBytes())
+            _initBytes.postValue(bytes)
         }
     }
 
-    fun setKey(inputStream: InputStream) {
+    fun setKey(bytes: ByteArray) {
         viewModelScope.launch(Dispatchers.IO) {
-            val byteMessage: ByteArray = inputStream.readBytes()
             val builder = StringBuilder()
-            for (msgByte in byteMessage) {
+            for (msgByte in bytes) {
                 builder.append(msgByte.toChar())
             }
             val tokenizer = StringTokenizer(builder.toString(), ",")
-            val key = IntArray(5)
-            for (i in 0..4) {
+            val tokenLength = tokenizer.countTokens()
+            val key = IntArray(tokenLength)
+            for (i in 0 until tokenLength) {
                 key[i] = Integer.parseInt(tokenizer.nextToken())
             }
             val generator = MWCGenerator(
@@ -67,7 +66,7 @@ class ExtractionViewModel : ViewModel() {
     fun extractMessage(init: ByteArray, mwcGenerator: MWCGenerator) {
         viewModelScope.launch(Dispatchers.Default) {
             _isLoading.postValue(true)
-            val runningTime = measureTimeMillis {
+            runningTime = measureTimeMillis {
                 val xn = mwcGenerator.generateRandomIndex(length)
                 val builder = StringBuilder()
                 for (i in 0 until length) {
@@ -79,13 +78,12 @@ class ExtractionViewModel : ViewModel() {
                 }
                 val extractedMessage = deSpreadMessage(builder.toString(), mwcGenerator)
                 _resultMessage.postValue(extractedMessage)
-            }
+            }.toDouble() / 1000
             _isLoading.postValue(false)
-            Log.d(TAG, "RunningTime: ${runningTime.toDouble() / 1_000} seconds")
         }
     }
 
     companion object {
-        private const val TAG = "EXTRACTION"
+        var runningTime by Delegates.notNull<Double>()
     }
 }

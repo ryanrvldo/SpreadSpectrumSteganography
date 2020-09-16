@@ -29,4 +29,14 @@
     <string name="let_begin">Let\'s Begin</string>
     <string name="choose_key">Choose key</string>
     <string name="please_wait">Please wait a moment..</string>
+    <string name="please_input_message">Looks like your message is still empty. Please fill it first.</string>
+    <string name="please_init_cover">Please initialized your cover object first.</string>
+    <string name="please_init_cover_message">Please initialized your cover object and message first.</string>
+    <string name="please_input_random_key">Please input or random your key first.</string>
+    <string name="please_init_stego">Please initialized your stego object first.</string>
+    <string name="please_init_key">Please initialized stego key first.</string>
+    <string name="need_help_click_here">Need help? Click here.</string>
+    <string name="home">Home</string>
+    <string name="embed">Embed</string>
+    <string name="extract">Extract</string>
 </resources>

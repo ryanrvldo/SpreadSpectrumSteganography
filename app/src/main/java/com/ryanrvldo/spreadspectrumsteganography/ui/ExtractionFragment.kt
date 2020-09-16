@@ -1,28 +1,25 @@
 package com.ryanrvldo.spreadspectrumsteganography.ui
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
-import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.ryanrvldo.spreadspectrumsteganography.R
-import com.ryanrvldo.spreadspectrumsteganography.databinding.FragmentExtractionBinding
 import com.ryanrvldo.spreadspectrumsteganography.util.CustomDialog
 import com.ryanrvldo.spreadspectrumsteganography.util.MWCGenerator
 import com.ryanrvldo.spreadspectrumsteganography.viewmodel.ExtractionViewModel
+import kotlinx.android.synthetic.main.fragment_extraction.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ExtractionFragment : Fragment(), View.OnClickListener {
 
-    private var _binding: FragmentExtractionBinding? = null
-    private val binding get() = _binding!!
     private val viewModel: ExtractionViewModel by viewModels()
 
     private lateinit var fileName: String
@@ -35,16 +32,16 @@ class ExtractionFragment : Fragment(), View.OnClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentExtractionBinding.inflate(inflater, container, false)
         customDialog = CustomDialog(requireContext())
-        return binding.root
+        return inflater.inflate(R.layout.fragment_extraction, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnChooseAudio.setOnClickListener(this)
-        binding.btnChooseKey.setOnClickListener(this)
-        binding.btnProcess.setOnClickListener(this)
+
+        btn_choose_audio.setOnClickListener(this)
+        btn_choose_key.setOnClickListener(this)
+        btn_extract.setOnClickListener(this)
 
         viewModel.initBytes.observe(viewLifecycleOwner, Observer { value ->
             value?.let { bytes ->
@@ -55,16 +52,16 @@ class ExtractionFragment : Fragment(), View.OnClickListener {
         viewModel.generator.observe(viewLifecycleOwner, Observer { value ->
             value?.let {
                 this.generator = it
-                binding.editTextA.setText(String.format(generator.a.toString()))
-                binding.editTextB.setText(String.format(generator.b.toString()))
-                binding.editTextC0.setText(String.format(generator.c0.toString()))
-                binding.editTxtX0Key.setText(String.format(generator.x0.toString()))
+                et_key_a.setText(String.format(generator.a.toString()))
+                et_key_b.setText(String.format(generator.b.toString()))
+                et_key_c0.setText(String.format(generator.c0.toString()))
+                et_key_x0.setText(String.format(generator.x0.toString()))
             }
         })
 
         viewModel.resultMessage.observe(viewLifecycleOwner, Observer { value ->
             value?.let { message ->
-                binding.editTxtMessage.setText(message)
+                et_message.setText(message)
             }
         })
 
@@ -74,7 +71,9 @@ class ExtractionFragment : Fragment(), View.OnClickListener {
                     true -> customDialog.showLoadingDialog()
                     false -> {
                         if (customDialog.isLoadingDialogShowing()) {
-                            customDialog.showSuccessDialog()
+                            customDialog.showSuccessDialog(
+                                "The message has been extracted successfully with running time: ${ExtractionViewModel.runningTime} seconds."
+                            )
                         }
                         customDialog.closeLoadingDialog()
                     }
@@ -85,58 +84,41 @@ class ExtractionFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.btn_choose_audio -> {
-                if (ContextCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    getAudioFile.launch("audio/*")
-                } else {
-                    getPermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                }
-            }
+            R.id.btn_choose_audio -> selectAudioResultLauncher.launch("audio/*")
             R.id.btn_choose_key -> {
                 if (!this::initBytes.isInitialized) {
-                    toast("Please initialized your stego object first.")
+                    toast(getString(R.string.please_init_stego))
                     return
                 }
-                getKeyFile.launch("*/*")
+                selectKeyResultLauncher.launch("*/*")
             }
-            R.id.btn_process -> {
-                if (!this::initBytes.isInitialized || !this::generator.isInitialized) {
-                    toast("Please initialized stego object or stego key first.")
-                    return
-                }
-                viewModel.extractMessage(this.initBytes, this.generator)
+            R.id.btn_extract -> when {
+                !this::initBytes.isInitialized -> toast(getString(R.string.please_init_stego))
+                !this::generator.isInitialized -> toast(getString(R.string.please_init_key))
+                else -> viewModel.extractMessage(this.initBytes, this.generator)
             }
         }
     }
 
-    private val getAudioFile =
+    private val selectAudioResultLauncher =
         registerForActivityResult(GetContent()) { uri ->
             requireContext().contentResolver.openInputStream(uri)?.let {
-                viewModel.setInitBytes(it)
-                uri.path?.let { path ->
-                    fileName = path.substringAfterLast("/")
-                    binding.editTextFilePath.setText(fileName)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    viewModel.setInitBytes(it.readBytes())
                 }
             }
-        }
-
-    private val getKeyFile =
-        registerForActivityResult(GetContent()) { uri ->
-            requireContext().contentResolver.openInputStream(uri)?.let {
-                viewModel.setKey(it)
+            uri.path?.let { path ->
+                fileName = path.substringAfterLast("/")
+                et_file_path.setText(fileName)
             }
         }
 
-    private val getPermissions =
-        registerForActivityResult(RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                getAudioFile.launch("audio/*")
-            } else {
-                toast("Permission denied, please allow permission first.")
+    private val selectKeyResultLauncher =
+        registerForActivityResult(GetContent()) { uri ->
+            requireContext().contentResolver.openInputStream(uri)?.let {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    viewModel.setKey(it.readBytes())
+                }
             }
         }
 

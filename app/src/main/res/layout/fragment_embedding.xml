@@ -23,7 +23,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_txt_message"
+                android:id="@+id/et_message"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/select_your_message"
@@ -57,14 +57,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="30dp"
-            android:layout_marginTop="@dimen/default_dimen"
+            android:layout_marginTop="8dp"
             app:hintEnabled="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_file_title">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_text_file_path"
+                android:id="@+id/et_file_path"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:enabled="false"
@@ -75,37 +75,38 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_choose_audio"
-            style="@style/Custom.Material.Button"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="@string/choose_file"
-            android:textSize="14sp"
+            android:layout_marginEnd="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/input_layout_file_path"
             app:layout_constraintEnd_toEndOf="@id/input_layout_file_path"
-            app:layout_constraintTop_toBottomOf="@id/input_layout_file_path" />
+            app:layout_constraintTop_toTopOf="@+id/input_layout_file_path" />
 
         <TextView
             android:id="@+id/tv_key_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="32dp"
             android:text="@string/key"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_choose_audio" />
+            app:layout_constraintTop_toBottomOf="@id/input_layout_file_path" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_layout_a_key"
+            android:id="@+id/input_layout_key_a"
             style="@style/Widget.Custom.TextInputLayout"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="@dimen/default_dimen"
+            android:layout_marginTop="8dp"
             android:hint="@string/a"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_key_title">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_txt_a_key"
+                android:id="@+id/et_key_a"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="number"
@@ -113,7 +114,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_layout_b_key"
+            android:id="@+id/input_layout_key_b"
             style="@style/Widget.Custom.TextInputLayout"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
@@ -121,10 +122,10 @@
             android:layout_marginTop="8dp"
             android:hint="@string/b"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/input_layout_a_key">
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_key_a">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_txt_b_key"
+                android:id="@+id/et_key_b"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="number"
@@ -132,7 +133,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_layout_c0_key"
+            android:id="@+id/input_layout_key_c0"
             style="@style/Widget.Custom.TextInputLayout"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
@@ -140,10 +141,10 @@
             android:layout_marginTop="8dp"
             android:hint="@string/c0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/input_layout_b_key">
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_key_b">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_txt_c0_key"
+                android:id="@+id/et_key_c0"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="number"
@@ -151,7 +152,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_layout_x0_key"
+            android:id="@+id/input_layout_key_x0"
             style="@style/Widget.Custom.TextInputLayout"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
@@ -159,10 +160,10 @@
             android:layout_marginTop="8dp"
             android:hint="@string/x0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/input_layout_c0_key">
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_key_c0">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_txt_x0_key"
+                android:id="@+id/et_key_x0"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="number"
@@ -178,19 +179,19 @@
             android:layout_marginEnd="8dp"
             android:fontFamily="@font/mavenpro_medium"
             android:text="@string/random"
-            app:layout_constraintEnd_toStartOf="@+id/btn_process"
-            app:layout_constraintTop_toBottomOf="@+id/input_layout_x0_key" />
+            app:layout_constraintEnd_toStartOf="@+id/btn_embed"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_key_x0" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_process"
+            android:id="@+id/btn_embed"
             style="@style/Custom.Material.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/default_dimen"
-            android:text="@string/process"
+            android:text="@string/embed"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/input_layout_x0_key"
-            app:layout_constraintTop_toBottomOf="@+id/input_layout_x0_key" />
+            app:layout_constraintEnd_toEndOf="@+id/input_layout_key_x0"
+            app:layout_constraintTop_toBottomOf="@+id/input_layout_key_x0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>

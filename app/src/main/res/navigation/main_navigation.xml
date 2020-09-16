@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/nav_embedding">
+    app:startDestination="@id/nav_home">
     <fragment
         android:id="@+id/nav_embedding"
         android:name="com.ryanrvldo.spreadspectrumsteganography.ui.EmbeddingFragment"
@@ -19,4 +19,18 @@
         android:name="com.ryanrvldo.spreadspectrumsteganography.ui.HelpFragment"
         android:label="@string/help"
         tools:layout="@layout/fragment_help" />
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.ryanrvldo.spreadspectrumsteganography.ui.HomeFragment"
+        android:label=""
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_embedding"
+            app:destination="@id/nav_embedding"
+            app:popUpTo="@id/nav_home" />
+        <action
+            android:id="@+id/action_home_to_help"
+            app:destination="@id/nav_help"
+            app:popUpTo="@id/nav_home" />
+    </fragment>
 </navigation>

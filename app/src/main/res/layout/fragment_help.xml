@@ -31,13 +31,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/default_dimen"
-            app:layout_constraintBottom_toTopOf="@id/embedIndicatorsContainer"
+            app:layout_constraintBottom_toTopOf="@id/embed_indicators_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_how_to_embed" />
 
         <LinearLayout
-            android:id="@+id/embedIndicatorsContainer"
+            android:id="@+id/embed_indicators_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/default_dimen"
@@ -59,20 +59,20 @@
             app:layout_constraintBottom_toTopOf="@id/viewpager_extract"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/embedIndicatorsContainer" />
+            app:layout_constraintTop_toBottomOf="@id/embed_indicators_container" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewpager_extract"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/default_dimen"
-            app:layout_constraintBottom_toTopOf="@id/extractIndicatorsContainer"
+            app:layout_constraintBottom_toTopOf="@id/extract_indicators_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_how_to_extract" />
 
         <LinearLayout
-            android:id="@+id/extractIndicatorsContainer"
+            android:id="@+id/extract_indicators_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/default_dimen"

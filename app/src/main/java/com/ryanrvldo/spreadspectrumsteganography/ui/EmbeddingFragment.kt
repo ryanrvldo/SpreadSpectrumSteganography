@@ -1,41 +1,34 @@
 package com.ryanrvldo.spreadspectrumsteganography.ui
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.ryanrvldo.spreadspectrumsteganography.R
-import com.ryanrvldo.spreadspectrumsteganography.databinding.FragmentEmbeddingBinding
 import com.ryanrvldo.spreadspectrumsteganography.util.CustomDialog
 import com.ryanrvldo.spreadspectrumsteganography.util.MWCGenerator
 import com.ryanrvldo.spreadspectrumsteganography.viewmodel.EmbeddingViewModel
+import kotlinx.android.synthetic.main.fragment_embedding.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileOutputStream
-import java.io.FileWriter
 
-class EmbeddingFragment : Fragment(), View.OnClickListener {
+class EmbeddingFragment : Fragment(),
+    View.OnClickListener {
 
-    private var _binding: FragmentEmbeddingBinding? = null
-    private val binding get() = _binding!!
     private val viewModel: EmbeddingViewModel by viewModels()
 
     private lateinit var fileName: String
-    private lateinit var initBytes: ByteArray
     private lateinit var message: String
+    private lateinit var initBytes: ByteArray
+    private lateinit var resultBytes: ByteArray
 
     private lateinit var customDialog: CustomDialog
 
@@ -43,21 +36,20 @@ class EmbeddingFragment : Fragment(), View.OnClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentEmbeddingBinding.inflate(layoutInflater, container, false)
         customDialog = CustomDialog(requireContext())
-        return binding.root
+        return layoutInflater.inflate(R.layout.fragment_embedding, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnChooseMessage.setOnClickListener(this)
-        binding.btnChooseAudio.setOnClickListener(this)
-        binding.btnRandomKey.setOnClickListener(this)
-        binding.btnProcess.setOnClickListener(this)
+        btn_choose_message.setOnClickListener(this)
+        btn_choose_audio.setOnClickListener(this)
+        btn_random_key.setOnClickListener(this)
+        btn_embed.setOnClickListener(this)
 
         viewModel.message.observe(viewLifecycleOwner, Observer { value ->
             value?.let { message ->
-                binding.editTxtMessage.setText(message)
+                et_message.setText(message)
                 this.message = message
             }
         })
@@ -81,151 +73,134 @@ class EmbeddingFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.btn_choose_message -> {
-                if (ContextCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    getMessageFile.launch("text/*")
-                } else {
-                    getPermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                }
-            }
+            R.id.btn_choose_message -> selectMessageResultLauncher.launch("text/*")
             R.id.btn_choose_audio -> {
-                if (!binding.editTxtMessage.text.isNullOrEmpty()) {
-                    getAudioFile.launch("audio/*")
+                if (!et_message.text.isNullOrEmpty()) {
+                    selectAudioResultLauncher.launch("audio/*")
                     if (!this::message.isInitialized) {
-                        message = binding.editTxtMessage.text.toString()
+                        message = et_message.text.toString()
                     }
                 } else {
-                    toast("Please input your message first.")
+                    toast(getString(R.string.please_input_message))
                 }
             }
             R.id.btn_random_key -> {
                 if (!this::initBytes.isInitialized) {
-                    toast("Please initialized your cover object first.")
+                    toast(getString(R.string.please_init_cover))
                     return
                 }
                 randomKey()
             }
-            R.id.btn_process -> {
+            R.id.btn_embed -> {
                 when {
-                    !this::message.isInitialized && !this::initBytes.isInitialized ->
-                        toast("Please input or initialized your cover object and message first.")
-                    isValidKey() -> {
+                    !this::message.isInitialized && !this::initBytes.isInitialized -> {
+                        toast(getString(R.string.please_init_cover_message))
+                    }
+                    !this::initBytes.isInitialized -> toast(getString(R.string.please_init_cover))
+                    !isValidKey() -> toast(getString(R.string.please_input_random_key))
+                    et_message.text.isNullOrEmpty() ||
+                            et_message.text.isNullOrBlank() -> {
+                        toast(getString(R.string.please_input_message))
+                    }
+                    else -> {
+                        message = et_message.text.toString()
                         embedMessage()
                     }
-                    else -> toast("Please input your key first.")
                 }
             }
         }
     }
 
     private fun embedMessage() {
-        lifecycleScope.launch(Dispatchers.Main) {
-            val keys = getKeys()
-            val resultBytes =
-                withContext(Dispatchers.Default) {
-                    viewModel.embedMessage(message, initBytes, keys)
-                }
-            saveStegoObject(resultBytes)
-            saveKey(getKeys())
+        lifecycleScope.launch(Dispatchers.Default) {
+            resultBytes = viewModel.embedMessage(message, initBytes, getKeys())
+            val name = fileName.substringBeforeLast(".")
+            val ext = fileName.substringAfterLast(".")
             withContext(Dispatchers.Main) {
-                customDialog.showSuccessDialog()
+                saveAudioResultLauncher.launch("$name[1].$ext")
+                saveKeyResultLauncher.launch("$name.key")
             }
         }
     }
 
     private fun randomKey() {
         val generator = viewModel.getRandomKey(initBytes.size.toLong())
-        binding.editTxtAKey.setText(String.format(generator.a.toString()))
-        binding.editTxtBKey.setText(String.format(generator.b.toString()))
-        binding.editTxtC0Key.setText(String.format(generator.c0.toString()))
-        binding.editTxtX0Key.setText(String.format(generator.x0.toString()))
+        et_key_a.setText(String.format(generator.a.toString()))
+        et_key_b.setText(String.format(generator.b.toString()))
+        et_key_c0.setText(String.format(generator.c0.toString()))
+        et_key_x0.setText(String.format(generator.x0.toString()))
     }
 
     private fun isValidKey(): Boolean {
-        return !binding.editTxtAKey.text.isNullOrEmpty() &&
-                !binding.editTxtBKey.text.isNullOrEmpty() &&
-                !binding.editTxtC0Key.text.isNullOrEmpty() &&
-                !binding.editTxtX0Key.text.isNullOrEmpty()
+        return !et_key_a.text.isNullOrEmpty() &&
+                !et_key_b.text.isNullOrEmpty() &&
+                !et_key_c0.text.isNullOrEmpty() &&
+                !et_key_x0.text.isNullOrEmpty()
     }
 
     private fun getKeys(): MWCGenerator {
         return MWCGenerator(
-            binding.editTxtAKey.text.toString().toBigInteger(),
-            binding.editTxtBKey.text.toString().toBigInteger(),
-            binding.editTxtC0Key.text.toString().toBigInteger(),
-            binding.editTxtX0Key.text.toString().toBigInteger()
+            et_key_a.text.toString().toBigInteger(),
+            et_key_b.text.toString().toBigInteger(),
+            et_key_c0.text.toString().toBigInteger(),
+            et_key_x0.text.toString().toBigInteger()
         )
     }
 
-    private fun saveStegoObject(resultBytes: ByteArray) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val file = File(
-                requireContext().getExternalFilesDir(null),
-                "${fileName.substringBeforeLast(".")}[1].${fileName.substringAfterLast(".")}"
-            )
-            val outputStream = FileOutputStream(file)
-            outputStream.write(resultBytes)
-            outputStream.close()
-
-            withContext(Dispatchers.Main) {
-                toast("Process success.\nStego Object and Stego Key is saved in${file.absolutePath}")
+    private val selectMessageResultLauncher =
+        registerForActivityResult(GetContent()) { result ->
+            result?.let { uri ->
+                requireContext().contentResolver.openInputStream(uri)?.let { inputStream ->
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        viewModel.setMessage(inputStream.readBytes())
+                    }
+                }
             }
         }
-    }
 
-    private fun saveKey(generator: MWCGenerator) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val file = File(
-                requireContext().getExternalFilesDir(null),
-                "${fileName.substringBeforeLast(".")}.key"
-            )
-            val bufferedWriter = BufferedWriter(FileWriter(file))
-            bufferedWriter.write("${generator.a},")
-            bufferedWriter.write("${generator.b},")
-            bufferedWriter.write("${generator.c0},")
-            bufferedWriter.write("${generator.x0},")
-            bufferedWriter.write("${message.toCharArray().size * 8 * 4},")
-            bufferedWriter.flush()
-            bufferedWriter.close()
+    private val selectAudioResultLauncher =
+        registerForActivityResult(GetContent()) { result ->
+            result?.let { uri ->
+                requireContext().contentResolver.openInputStream(uri)?.let {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        viewModel.setInitBytes(it.readBytes())
+                    }
+                }
+                uri.path?.let { path ->
+                    fileName = path.substringAfterLast("/")
+                    et_file_path.setText(fileName)
+                }
+            }
         }
-    }
+
+    private val saveAudioResultLauncher =
+        registerForActivityResult(CreateDocument()) { uri ->
+            uri?.also {
+                viewModel.saveStegoObject(
+                    resultBytes,
+                    requireContext().contentResolver.openOutputStream(it)
+                )
+            }
+        }
+
+    private val saveKeyResultLauncher =
+        registerForActivityResult(CreateDocument()) { uri ->
+            uri?.also {
+                viewModel.saveKey(
+                    getKeys(),
+                    message.toCharArray().size * 32,
+                    requireContext().contentResolver.openOutputStream(it)
+                )
+                customDialog.showSuccessDialog(
+                    "The result of embedding process:\n" +
+                            "Running Time: ${EmbeddingViewModel.runningTime} seconds.\n" +
+                            "MSE: ${String.format("%.6f", EmbeddingViewModel.MSE)}\n" +
+                            "PSNR: ${String.format("%.6f dB.", EmbeddingViewModel.PSNR)}"
+                )
+            }
+        }
 
     private fun toast(msg: String) {
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
     }
-
-    private val getMessageFile =
-        registerForActivityResult(GetContent()) { result ->
-            result?.let { uri ->
-                requireContext().contentResolver.openInputStream(uri)?.let { inputStream ->
-                    viewModel.setMessage(inputStream)
-                }
-            }
-        }
-
-    private val getAudioFile =
-        registerForActivityResult(GetContent()) { result ->
-            result?.let { uri ->
-                requireContext().contentResolver.openInputStream(uri)?.let {
-                    viewModel.setInitBytes(it)
-                }
-                uri.path?.let { path ->
-                    fileName = path.substringAfterLast("/")
-                    binding.editTextFilePath.setText(fileName)
-                }
-            }
-        }
-
-    private val getPermissions =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                getMessageFile.launch("text/*")
-            } else {
-                toast("Permission denied, please allow permission first.")
-            }
-        }
 }

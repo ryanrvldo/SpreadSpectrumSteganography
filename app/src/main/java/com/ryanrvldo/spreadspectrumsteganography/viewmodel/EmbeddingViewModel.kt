@@ -1,6 +1,5 @@
 package com.ryanrvldo.spreadspectrumsteganography.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,9 +9,14 @@ import com.ryanrvldo.spreadspectrumsteganography.util.SpreadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.InputStream
+import java.io.BufferedWriter
+import java.io.OutputStream
+import java.io.OutputStreamWriter
 import java.math.BigInteger
 import kotlin.math.abs
+import kotlin.math.log10
+import kotlin.math.pow
+import kotlin.properties.Delegates
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
@@ -30,20 +34,19 @@ class EmbeddingViewModel : ViewModel() {
     val isLoading: LiveData<Boolean>
         get() = _isLoading
 
-    fun setMessage(inputStream: InputStream) {
+    fun setMessage(bytes: ByteArray) {
         viewModelScope.launch(Dispatchers.IO) {
-            val bytesMessage = inputStream.readBytes()
             val stringBuilder = StringBuilder()
-            bytesMessage.forEach {
+            bytes.forEach {
                 stringBuilder.append(it.toChar())
             }
             _message.postValue(stringBuilder.toString())
         }
     }
 
-    fun setInitBytes(inputStream: InputStream) {
+    fun setInitBytes(bytes: ByteArray) {
         viewModelScope.launch(Dispatchers.IO) {
-            _initBytes.postValue(inputStream.readBytes())
+            _initBytes.postValue(bytes)
         }
     }
 
@@ -60,7 +63,7 @@ class EmbeddingViewModel : ViewModel() {
         val results = init.clone()
         withContext(Dispatchers.Default) {
             _isLoading.postValue(true)
-            val runningTime = measureTimeMillis {
+            runningTime = measureTimeMillis {
                 val binaryMsg = SpreadHelper.spreadMessage(msg, generator).toCharArray()
                 val length = binaryMsg.size
                 val xn = generator.generateRandomIndex(length)
@@ -73,13 +76,51 @@ class EmbeddingViewModel : ViewModel() {
                     }
                 }
                 _isLoading.postValue(false)
-            }
-            Log.d(TAG, "RunningTime: ${runningTime.toDouble() / 1_000} seconds")
+            }.toDouble() / 1000
+        }
+        withContext(Dispatchers.Default) {
+            calcStegoQuality(init, results)
         }
         return results
     }
 
+    private fun calcStegoQuality(init: ByteArray, result: ByteArray) {
+        val length = if (init.size == result.size) init.size else result.size
+        var temp = 0.0
+        for (i in 0 until length) {
+            temp += abs(result[i] - init[i]).toDouble().pow(2)
+        }
+        MSE = temp / length
+        PSNR = 10 * log10((256.0).pow(2) / MSE)
+    }
+
+    fun saveStegoObject(result: ByteArray, outputStream: OutputStream?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            outputStream?.apply {
+                write(result)
+                close()
+            }
+        }
+    }
+
+    fun saveKey(generator: MWCGenerator, msgBinSize: Int, outputStream: OutputStream?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            outputStream?.let {
+                val bufferedWriter = BufferedWriter(OutputStreamWriter(outputStream))
+                bufferedWriter.write("${generator.a},")
+                bufferedWriter.write("${generator.b},")
+                bufferedWriter.write("${generator.c0},")
+                bufferedWriter.write("${generator.x0},")
+                bufferedWriter.write("${msgBinSize},")
+                bufferedWriter.flush()
+                bufferedWriter.close()
+            }
+        }
+    }
+
     companion object {
-        private const val TAG = "EMBEDDING"
+        var runningTime by Delegates.notNull<Double>()
+        var MSE by Delegates.notNull<Double>()
+        var PSNR by Delegates.notNull<Double>()
     }
 }

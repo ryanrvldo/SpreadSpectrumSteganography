@@ -5,14 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    tools:context=".ui.LauncherActivity">
+    tools:context=".ui.HomeFragment">
 
     <ImageView
         android:id="@+id/img_banner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
         android:contentDescription="@string/content_description"
         android:src="@drawable/undraw_security_on"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="32dp"
         android:fontFamily="@font/mavenpro_bold"
         android:text="@string/app_title"
         android:textColor="@color/colorTextSecondary"
@@ -50,10 +48,24 @@
         style="@style/Custom.Material.Button"
         android:layout_width="160dp"
         android:layout_height="60dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="32dp"
         android:text="@string/let_begin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_subtitle" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_help"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/need_help_click_here"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textColor="@color/colorSecondary"
+        app:layout_constraintEnd_toEndOf="@id/btn_begin"
+        app:layout_constraintStart_toStartOf="@id/btn_begin"
+        app:layout_constraintTop_toBottomOf="@id/btn_begin"
+        app:rippleColor="@color/colorSecondary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
